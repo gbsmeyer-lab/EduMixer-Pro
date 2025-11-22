@@ -25,7 +25,7 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
   toggleAuxPrePost
 }) => {
   return (
-    <div className="flex flex-col items-center bg-gray-950 border-l-2 border-gray-700 p-2 w-24 shrink-0 h-full">
+    <div className="flex flex-col items-center bg-gray-950 border-l-2 border-gray-700 p-2 w-24 shrink-0 h-full relative">
       {/* Power Button */}
       <button
         onClick={toggleAudio}
@@ -45,7 +45,7 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
       </div>
 
       {/* Aux Pre/Post Toggles - Aligned with Channel Aux Knobs */}
-      <div className="flex flex-col gap-2 mb-4 w-full">
+      <div className="flex flex-col gap-2 mb-4 w-full shrink-0">
         {auxPrePost.map((isPre, idx) => (
             <div key={idx} className="h-[58px] flex items-center justify-center">
                  <button
@@ -66,21 +66,23 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
         ))}
       </div>
 
-      {/* Fader Section - Flex-1 to fill remaining vertical space */}
-      <div className="flex-1 w-full flex justify-center pb-2 min-h-0 mt-2">
-        <Fader
-          value={master.fader}
-          onChange={onChange}
-          meterLevel={meterLevelL}
-          meterLevelR={meterLevelR}
-          isStereo
-          color="#ec4899" // Pink/Red for master meter
-          height="100%" // Fill available space
-          capColor="#dc2626" // Red-600 for Master Cap
-        />
+      {/* Fader Section - Uses absolute positioning to guarantee height filling */}
+      <div className="flex-1 w-full relative min-h-[200px] mb-2">
+        <div className="absolute inset-0 flex justify-center">
+             <Fader
+                value={master.fader}
+                onChange={onChange}
+                meterLevel={meterLevelL}
+                meterLevelR={meterLevelR}
+                isStereo
+                color="#ec4899" // Pink/Red for master meter
+                height="100%" // Fill available absolute space
+                capColor="#dc2626" // Red-600 for Master Cap
+            />
+        </div>
       </div>
       
-      <div className="text-xs text-white font-bold font-mono mb-2">MASTER</div>
+      <div className="text-xs text-white font-bold font-mono mb-2 shrink-0">MASTER</div>
     </div>
   );
 };

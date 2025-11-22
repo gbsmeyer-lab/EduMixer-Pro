@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 interface FaderProps {
@@ -9,6 +10,7 @@ interface FaderProps {
   isStereo?: boolean;
   meterLevelR?: number; // For stereo master
   capColor?: string; // Custom color for fader cap
+  className?: string; // To allow flex control from parent
 }
 
 export const Fader: React.FC<FaderProps> = ({
@@ -20,6 +22,7 @@ export const Fader: React.FC<FaderProps> = ({
   isStereo = false,
   meterLevelR = 0,
   capColor,
+  className = "",
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -34,6 +37,8 @@ export const Fader: React.FC<FaderProps> = ({
   const handleMove = useCallback((clientY: number) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
+    if (rect.height === 0) return; // Prevent division by zero if hidden/collapsed
+
     // Calculate normalized position (0 at bottom, 1 at top)
     let newValue = 1 - (clientY - rect.top) / rect.height;
     newValue = Math.max(0, Math.min(1, newValue));
@@ -63,6 +68,8 @@ export const Fader: React.FC<FaderProps> = ({
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   // Fader Cap Position
+  // Value 1 (Top) -> 0% top
+  // Value 0 (Bottom) -> 100% top
   const capPosition = (1 - value) * 100; 
   
   // Determine Cap Styling
@@ -78,8 +85,16 @@ export const Fader: React.FC<FaderProps> = ({
     } : {})
   };
 
+  // Style object for container height
+  const containerStyle: React.CSSProperties = typeof height === 'number' 
+    ? { height: `${height}px` } 
+    : { height };
+
   return (
-    <div className="flex gap-2 h-full items-end" style={{ height: typeof height === 'number' ? `${height}px` : height }}>
+    <div 
+        className={`flex gap-2 items-end relative ${typeof height === 'string' ? 'h-full' : ''} ${className}`} 
+        style={containerStyle}
+    >
         {/* Fader Track */}
       <div 
         ref={trackRef}

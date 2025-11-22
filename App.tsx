@@ -38,13 +38,13 @@ const MixerInterface: React.FC<{
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-neutral-900 p-4 overflow-auto">
+    <div className="w-full h-screen flex flex-col items-center justify-center bg-neutral-900 p-4 overflow-hidden">
       
       {/* Main Mixer Board Container */}
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-4 h-full max-h-full justify-center">
         
         {/* Mixer Body */}
-        <div className="flex bg-black/50 p-4 rounded-xl border border-gray-800 shadow-2xl relative mt-8">
+        <div className="flex bg-black/50 p-4 rounded-xl border border-gray-800 shadow-2xl relative shrink-0 max-h-full overflow-hidden">
              
              {/* 1. Input Channels */}
              <div className="flex h-full">
@@ -66,14 +66,14 @@ const MixerInterface: React.FC<{
              <div className="flex flex-col bg-gray-900/30">
                 
                 {/* Top Area: Logo & Monitors */}
-                <div className="flex-1 flex flex-col items-center pt-3 pb-3 border-b border-gray-800 border-r">
+                <div className="flex-1 flex flex-col items-center pt-3 pb-3 border-b border-gray-800 border-r min-h-0">
                     {/* Logo */}
-                    <h1 className="text-2xl font-bold text-gray-200 tracking-wider mb-2">
+                    <h1 className="text-2xl font-bold text-gray-200 tracking-wider mb-2 shrink-0">
                       EDUMIXER <span className="text-blue-500 text-xs align-top">PRO</span>
                     </h1>
 
                     {/* Headphone Monitors - Vertically Stacked */}
-                    <div className="flex flex-col gap-2 justify-center items-center flex-1 w-full px-2">
+                    <div className="flex flex-col gap-2 justify-center items-center flex-1 w-full px-2 min-h-0 overflow-hidden">
                         <HeadphoneMonitor 
                             id={1} 
                             leftSources={meterLevels.headphones.hp1.l} 
@@ -88,7 +88,7 @@ const MixerInterface: React.FC<{
                 </div>
 
                 {/* Bottom Area: Subgroup Strips */}
-                <div className="flex">
+                <div className="flex shrink-0">
                     {subgroups.map(grp => (
                         <SubgroupStrip 
                             key={grp.id} 
@@ -119,7 +119,7 @@ const MixerInterface: React.FC<{
         </div>
 
         {/* Footer Instructions */}
-        <div className="mt-4 text-gray-500 text-xs max-w-4xl flex gap-8 bg-gray-800/50 p-3 rounded-lg border border-gray-800">
+        <div className="mt-4 text-gray-500 text-xs max-w-4xl flex gap-8 bg-gray-800/50 p-3 rounded-lg border border-gray-800 shrink-0">
             <div className="font-bold text-gray-400 whitespace-nowrap">QUICK GUIDE:</div>
             <ul className="flex gap-6 list-disc list-inside">
                 <li>Click POWER on the Master strip</li>
