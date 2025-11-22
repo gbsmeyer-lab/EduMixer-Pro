@@ -117,20 +117,6 @@ const MixerInterface: React.FC<{
                 />
              </div>
         </div>
-
-        {/* Footer Instructions */}
-        <div className="mt-4 text-gray-500 text-xs max-w-4xl flex gap-8 bg-gray-800/50 p-3 rounded-lg border border-gray-800 shrink-0">
-            <div className="font-bold text-gray-400 whitespace-nowrap">QUICK GUIDE:</div>
-            <ul className="flex gap-6 list-disc list-inside">
-                <li>Click POWER on the Master strip</li>
-                <li>Adjust Gains to set levels</li>
-                <li>Route Channels to Subs/Main</li>
-                <li>Route Subs to Main</li>
-                <li>Raise Faders</li>
-                <li>Use Aux knobs for Headphones</li>
-            </ul>
-        </div>
-
       </div>
     </div>
   );
@@ -139,7 +125,7 @@ const MixerInterface: React.FC<{
 export default function App() {
   const [channels, setChannels] = useState<ChannelState[]>(INITIAL_CHANNELS);
   const [subgroups, setSubgroups] = useState<SubgroupState[]>(INITIAL_SUBGROUPS);
-  const [master, setMaster] = useState<MasterState>({ fader: 0.8 });
+  const [master, setMaster] = useState<MasterState>({ fader: 0 });
   // Default to Pre-Fader (true)
   const [auxPrePost, setAuxPrePost] = useState<boolean[]>([true, true, true, true]);
 

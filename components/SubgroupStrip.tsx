@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SubgroupState } from '../types';
 import { Fader } from './Fader';
@@ -44,7 +45,7 @@ export const SubgroupStrip: React.FC<SubgroupStripProps> = ({ group, updateGroup
       </div>
 
       {/* Fader */}
-      <div className="h-[220px] flex justify-center w-full pb-2">
+      <div className="flex justify-center w-full pb-2">
         <Fader
           value={group.fader}
           onChange={(val) => updateGroup(group.id, { fader: val })}
@@ -54,7 +55,7 @@ export const SubgroupStrip: React.FC<SubgroupStripProps> = ({ group, updateGroup
         />
       </div>
       
-       <div className="text-xs text-white font-bold font-mono mt-1">SUB {group.id}</div>
+       <div className="text-xs text-white font-bold font-mono mt-6">SUB {group.id}</div>
     </div>
   );
 };

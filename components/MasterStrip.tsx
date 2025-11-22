@@ -67,7 +67,7 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
       </div>
 
       {/* Fader Section - Uses absolute positioning to guarantee height filling */}
-      <div className="flex-1 w-full relative min-h-[200px] mb-2">
+      <div className="flex-1 w-full relative min-h-[200px] mb-6">
         <div className="absolute inset-0 flex justify-center">
              <Fader
                 value={master.fader}

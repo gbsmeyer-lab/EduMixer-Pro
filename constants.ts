@@ -16,8 +16,8 @@ export const INITIAL_CHANNELS: ChannelState[] = [
     gain: 0,
     aux: [0, 0, 0, 0],
     pan: 0,
-    fader: 0.75, // Unity approx
-    routing: { main: true, sub12: false, sub34: false },
+    fader: 0, // Closed
+    routing: { main: false, sub12: false, sub34: false },
     inputLevel: 1.0, // Constant signal presence
   },
   {
@@ -27,8 +27,8 @@ export const INITIAL_CHANNELS: ChannelState[] = [
     gain: 0,
     aux: [0, 0, 0, 0],
     pan: 0,
-    fader: 0.75,
-    routing: { main: true, sub12: false, sub34: false },
+    fader: 0, // Closed
+    routing: { main: false, sub12: false, sub34: false },
     inputLevel: 1.0,
   },
   {
@@ -38,8 +38,8 @@ export const INITIAL_CHANNELS: ChannelState[] = [
     gain: 0,
     aux: [0, 0, 0, 0],
     pan: 0,
-    fader: 0.75,
-    routing: { main: true, sub12: false, sub34: false },
+    fader: 0, // Closed
+    routing: { main: false, sub12: false, sub34: false },
     inputLevel: 1.0,
   },
   {
@@ -49,17 +49,17 @@ export const INITIAL_CHANNELS: ChannelState[] = [
     gain: 0,
     aux: [0, 0, 0, 0],
     pan: 0,
-    fader: 0.75,
-    routing: { main: true, sub12: false, sub34: false },
+    fader: 0, // Closed
+    routing: { main: false, sub12: false, sub34: false },
     inputLevel: 1.0,
   },
 ];
 
 export const INITIAL_SUBGROUPS: SubgroupState[] = [
-  { id: 1, name: 'SUB 1', fader: 0.75, routing: { mainL: true, mainR: false } },
-  { id: 2, name: 'SUB 2', fader: 0.75, routing: { mainL: false, mainR: true } },
-  { id: 3, name: 'SUB 3', fader: 0.75, routing: { mainL: true, mainR: false } },
-  { id: 4, name: 'SUB 4', fader: 0.75, routing: { mainL: false, mainR: true } },
+  { id: 1, name: 'SUB 1', fader: 0, routing: { mainL: false, mainR: false } },
+  { id: 2, name: 'SUB 2', fader: 0, routing: { mainL: false, mainR: false } },
+  { id: 3, name: 'SUB 3', fader: 0, routing: { mainL: false, mainR: false } },
+  { id: 4, name: 'SUB 4', fader: 0, routing: { mainL: false, mainR: false } },
 ];
 
 // Logic mapping for HP routing

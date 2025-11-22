@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ChannelState } from '../types';
 import { Knob } from './Knob';
@@ -83,8 +84,8 @@ export const ChannelStrip: React.FC<ChannelStripProps> = ({ channel, updateChann
         />
       </div>
 
-      {/* Fader Section */}
-      <div className="flex-1 flex justify-center w-full pb-2">
+      {/* Fader Section - Added items-end for bottom alignment */}
+      <div className="flex-1 flex items-end justify-center w-full pb-2">
         <Fader
           value={channel.fader}
           onChange={(val) => updateChannel(channel.id, { fader: val })}
@@ -94,7 +95,7 @@ export const ChannelStrip: React.FC<ChannelStripProps> = ({ channel, updateChann
         />
       </div>
       
-      <div className="text-xs text-white font-bold font-mono mt-1">CH {channel.id}</div>
+      <div className="text-xs text-white font-bold font-mono mt-6">CH {channel.id}</div>
     </div>
   );
 };
