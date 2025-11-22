@@ -60,6 +60,9 @@ export const Fader: React.FC<FaderProps> = ({
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (isDragging) {
+      // Allow 2-finger gestures (like pan/zoom) to pass through without affecting the fader
+      if (e.touches.length > 1) return;
+
       // Prevent scrolling while moving fader
       if (e.cancelable) e.preventDefault();
       handleMove(e.touches[0].clientY);

@@ -64,6 +64,9 @@ export const Knob: React.FC<KnobProps> = ({
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (!isDragging) return;
+    // Allow 2-finger gestures (like pan/zoom) to pass through without affecting the knob
+    if (e.touches.length > 1) return;
+    
     if (e.cancelable) e.preventDefault(); // Prevent scrolling while dragging
     onChange(calculateValue(e.touches[0].clientY));
   }, [isDragging, max, min, onChange]);

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChannelStrip } from './components/ChannelStrip';
 import { SubgroupStrip } from './components/SubgroupStrip';
 import { MasterStrip } from './components/MasterStrip';
@@ -55,87 +54,80 @@ const MixerInterface: React.FC<{
   };
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center bg-neutral-900 p-4 overflow-hidden">
-      
-      {/* Main Mixer Board Container */}
-      <div className="flex flex-col items-center gap-4 h-full max-h-full justify-center">
-        
-        {/* Mixer Body */}
-        <div className="flex bg-black/50 p-4 rounded-xl border border-gray-800 shadow-2xl relative shrink-0 max-h-full overflow-hidden">
-             
-             {/* 1. Input Channels */}
-             <div className="flex h-full">
-                {channels.map(ch => (
-                    <ChannelStrip 
-                        key={ch.id} 
-                        channel={ch} 
-                        updateChannel={updateChannel}
-                        meterLevel={meterLevels.channels[ch.id] || 0}
+    /* Mixer Body */
+    <div className="flex bg-black/50 p-4 rounded-xl border border-gray-800 shadow-2xl relative overflow-hidden">
+         
+         {/* 1. Input Channels */}
+         <div className="flex h-full">
+            {channels.map(ch => (
+                <ChannelStrip 
+                    key={ch.id} 
+                    channel={ch} 
+                    updateChannel={updateChannel}
+                    meterLevel={meterLevels.channels[ch.id] || 0}
+                />
+            ))}
+         </div>
+
+         {/* Spacer/Divider */}
+         <div className="w-1 bg-gray-900 border-r border-gray-800 mx-1"></div>
+
+         {/* 2. Subgroup Section (Contains Logo, Headphones, Subgroups) */}
+         {/* Width: 4 subgroups * w-24 (6rem/96px) = 384px approx */}
+         <div className="flex flex-col bg-gray-900/30">
+            
+            {/* Top Area: Logo & Monitors */}
+            <div className="flex-1 flex flex-col items-center pt-3 pb-3 border-b border-gray-800 border-r min-h-0">
+                {/* Logo */}
+                <h1 className="text-2xl font-bold text-gray-200 tracking-wider mb-2 shrink-0">
+                  EDUMIXER <span className="text-blue-500 text-xs align-top">PRO</span>
+                </h1>
+
+                {/* Headphone Monitors - Vertically Stacked */}
+                <div className="flex flex-col gap-2 justify-center items-center flex-1 w-full px-2 min-h-0 overflow-hidden">
+                    <HeadphoneMonitor 
+                        id={1} 
+                        leftSources={meterLevels.headphones.hp1.l} 
+                        rightSources={meterLevels.headphones.hp1.r} 
+                    />
+                    <HeadphoneMonitor 
+                        id={2} 
+                        leftSources={meterLevels.headphones.hp2.l} 
+                        rightSources={meterLevels.headphones.hp2.r} 
+                    />
+                </div>
+            </div>
+
+            {/* Bottom Area: Subgroup Strips */}
+            <div className="flex shrink-0">
+                {subgroups.map(grp => (
+                    <SubgroupStrip 
+                        key={grp.id} 
+                        group={grp} 
+                        updateGroup={updateGroup} 
+                        meterLevel={meterLevels.subgroups[grp.id] || 0}
                     />
                 ))}
-             </div>
+            </div>
+         </div>
 
-             {/* Spacer/Divider */}
-             <div className="w-1 bg-gray-900 border-r border-gray-800 mx-1"></div>
+         {/* Spacer/Divider */}
+         <div className="w-1 bg-gray-900 border-r border-gray-800 mx-1"></div>
 
-             {/* 2. Subgroup Section (Contains Logo, Headphones, Subgroups) */}
-             {/* Width: 4 subgroups * w-24 (6rem/96px) = 384px approx */}
-             <div className="flex flex-col bg-gray-900/30">
-                
-                {/* Top Area: Logo & Monitors */}
-                <div className="flex-1 flex flex-col items-center pt-3 pb-3 border-b border-gray-800 border-r min-h-0">
-                    {/* Logo */}
-                    <h1 className="text-2xl font-bold text-gray-200 tracking-wider mb-2 shrink-0">
-                      EDUMIXER <span className="text-blue-500 text-xs align-top">PRO</span>
-                    </h1>
-
-                    {/* Headphone Monitors - Vertically Stacked */}
-                    <div className="flex flex-col gap-2 justify-center items-center flex-1 w-full px-2 min-h-0 overflow-hidden">
-                        <HeadphoneMonitor 
-                            id={1} 
-                            leftSources={meterLevels.headphones.hp1.l} 
-                            rightSources={meterLevels.headphones.hp1.r} 
-                        />
-                        <HeadphoneMonitor 
-                            id={2} 
-                            leftSources={meterLevels.headphones.hp2.l} 
-                            rightSources={meterLevels.headphones.hp2.r} 
-                        />
-                    </div>
-                </div>
-
-                {/* Bottom Area: Subgroup Strips */}
-                <div className="flex shrink-0">
-                    {subgroups.map(grp => (
-                        <SubgroupStrip 
-                            key={grp.id} 
-                            group={grp} 
-                            updateGroup={updateGroup} 
-                            meterLevel={meterLevels.subgroups[grp.id] || 0}
-                        />
-                    ))}
-                </div>
-             </div>
-
-             {/* Spacer/Divider */}
-             <div className="w-1 bg-gray-900 border-r border-gray-800 mx-1"></div>
-
-             {/* 3. Master Section */}
-             <div className="flex h-full">
-                <MasterStrip 
-                    master={master} 
-                    onChange={(val) => setMaster({ ...master, fader: val })}
-                    meterLevelL={meterLevels.master.l}
-                    meterLevelR={meterLevels.master.r}
-                    toggleAudio={toggleAudio}
-                    isAudioActive={isAudioActive}
-                    auxPrePost={auxPrePost}
-                    toggleAuxPrePost={toggleAuxPrePost}
-                    onReset={handleReset}
-                />
-             </div>
-        </div>
-      </div>
+         {/* 3. Master Section */}
+         <div className="flex h-full">
+            <MasterStrip 
+                master={master} 
+                onChange={(val) => setMaster({ ...master, fader: val })}
+                meterLevelL={meterLevels.master.l}
+                meterLevelR={meterLevels.master.r}
+                toggleAudio={toggleAudio}
+                isAudioActive={isAudioActive}
+                auxPrePost={auxPrePost}
+                toggleAuxPrePost={toggleAuxPrePost}
+                onReset={handleReset}
+            />
+         </div>
     </div>
   );
 };
@@ -144,26 +136,73 @@ export default function App() {
   const [channels, setChannels] = useState<ChannelState[]>(INITIAL_CHANNELS);
   const [subgroups, setSubgroups] = useState<SubgroupState[]>(INITIAL_SUBGROUPS);
   const [master, setMaster] = useState<MasterState>({ fader: 0 });
-  // Default to Pre-Fader (true)
   const [auxPrePost, setAuxPrePost] = useState<boolean[]>([true, true, true, true]);
 
+  // Panning state
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const lastCenter = useRef({ x: 0, y: 0 });
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const cX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      lastCenter.current = { x: cX, y: cY };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      if (e.cancelable) e.preventDefault(); // Prevent browser native pan/zoom
+      e.stopPropagation();
+
+      const cX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+      const dx = cX - lastCenter.current.x;
+      const dy = cY - lastCenter.current.y;
+
+      setPan(p => ({ x: p.x + dx, y: p.y + dy }));
+      lastCenter.current = { x: cX, y: cY };
+    }
+  };
+
   return (
-    <AudioEngineProvider 
-        channels={channels} 
-        subgroups={subgroups} 
-        master={master}
-        auxPrePost={auxPrePost}
+    <div 
+      className="fixed inset-0 bg-neutral-900 overflow-hidden touch-none" 
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
     >
-        <MixerInterface 
+        <AudioEngineProvider 
             channels={channels} 
-            setChannels={setChannels}
-            subgroups={subgroups}
-            setSubgroups={setSubgroups}
+            subgroups={subgroups} 
             master={master}
-            setMaster={setMaster}
             auxPrePost={auxPrePost}
-            setAuxPrePost={setAuxPrePost}
-        />
-    </AudioEngineProvider>
+        >
+            <div 
+                className="absolute origin-center transition-transform duration-75 ease-out will-change-transform"
+                style={{ 
+                    left: '50%', 
+                    top: '50%', 
+                    transform: `translate(-50%, -50%) translate(${pan.x}px, ${pan.y}px)`
+                }}
+            >
+                <MixerInterface 
+                    channels={channels} 
+                    setChannels={setChannels}
+                    subgroups={subgroups}
+                    setSubgroups={setSubgroups}
+                    master={master}
+                    setMaster={setMaster}
+                    auxPrePost={auxPrePost}
+                    setAuxPrePost={setAuxPrePost}
+                />
+            </div>
+        </AudioEngineProvider>
+        
+        {/* User Hint */}
+        <div className="absolute bottom-4 right-4 text-neutral-600 text-xs pointer-events-none select-none">
+            Use 2 fingers to pan
+        </div>
+    </div>
   );
 }
