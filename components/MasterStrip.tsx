@@ -44,7 +44,7 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
       {/* Reset Button */}
       <button
         onClick={onReset}
-        className="text-[10px] font-bold px-2 py-1 rounded w-full text-center mt-2 border border-yellow-800/50 text-yellow-600 hover:bg-yellow-900/20 hover:text-yellow-500 hover:border-yellow-600 transition-colors"
+        className="text-[10px] font-bold px-2 py-1 rounded w-full text-center mt-2 border border-cyan-800/50 text-cyan-500 hover:bg-cyan-900/20 hover:text-cyan-400 hover:border-cyan-500 transition-colors"
         title="Reset all faders, knobs, and routing to default"
       >
         RESET
