@@ -28,16 +28,25 @@ export const Knob: React.FC<KnobProps> = ({
   // Map 0-1 to -135deg to +135deg
   const rotation = (value - min) / (max - min) * 270 - 135;
 
+  // --- Mouse Handlers ---
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
     setIsDragging(true);
     startY.current = e.clientY;
     startValue.current = value;
     document.body.style.cursor = 'ns-resize';
   };
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    const deltaY = startY.current - e.clientY;
+  // --- Touch Handlers ---
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    startY.current = e.touches[0].clientY;
+    startValue.current = value;
+  };
+
+  // --- Calculation Logic ---
+  const calculateValue = (clientY: number) => {
+    const deltaY = startY.current - clientY;
     const sensitivity = 0.005; // Value change per pixel
     const deltaValue = deltaY * sensitivity * (max - min);
     
@@ -45,10 +54,21 @@ export const Knob: React.FC<KnobProps> = ({
     if (newValue < min) newValue = min;
     if (newValue > max) newValue = max;
     
-    onChange(newValue);
+    return newValue;
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    onChange(calculateValue(e.clientY));
   }, [isDragging, max, min, onChange]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging) return;
+    if (e.cancelable) e.preventDefault(); // Prevent scrolling while dragging
+    onChange(calculateValue(e.touches[0].clientY));
+  }, [isDragging, max, min, onChange]);
+
+  const handleEnd = useCallback(() => {
     setIsDragging(false);
     document.body.style.cursor = 'default';
   }, []);
@@ -56,23 +76,34 @@ export const Knob: React.FC<KnobProps> = ({
   useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mouseup', handleEnd);
+      // Passive: false is required to use preventDefault inside touchmove
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleEnd);
+      window.addEventListener('touchcancel', handleEnd);
     } else {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseup', handleEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleEnd);
+      window.removeEventListener('touchcancel', handleEnd);
     }
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseup', handleEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleEnd);
+      window.removeEventListener('touchcancel', handleEnd);
     };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, handleMouseMove, handleTouchMove, handleEnd]);
 
   return (
     <div className="flex flex-col items-center gap-1">
       <div
         ref={knobRef}
         onMouseDown={handleMouseDown}
-        className="relative w-10 h-10 cursor-ns-resize group"
+        onTouchStart={handleTouchStart}
+        className="relative w-10 h-10 cursor-ns-resize group touch-none"
         title={label}
       >
         {/* Background Ring */}

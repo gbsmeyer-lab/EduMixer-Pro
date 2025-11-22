@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 interface FaderProps {
@@ -34,6 +33,14 @@ export const Fader: React.FC<FaderProps> = ({
     document.body.style.cursor = 'ns-resize';
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // We do NOT call preventDefault here to allow click events to propagate if needed,
+    // but generally for a fader we want immediate control.
+    setIsDragging(true);
+    // Move fader cap immediately to touch point
+    handleMove(e.touches[0].clientY);
+  };
+
   const handleMove = useCallback((clientY: number) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
@@ -51,7 +58,15 @@ export const Fader: React.FC<FaderProps> = ({
     }
   }, [isDragging, handleMove]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (isDragging) {
+      // Prevent scrolling while moving fader
+      if (e.cancelable) e.preventDefault();
+      handleMove(e.touches[0].clientY);
+    }
+  }, [isDragging, handleMove]);
+
+  const handleEnd = useCallback(() => {
     setIsDragging(false);
     document.body.style.cursor = 'default';
   }, []);
@@ -59,13 +74,19 @@ export const Fader: React.FC<FaderProps> = ({
   useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mouseup', handleEnd);
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleEnd);
+      window.addEventListener('touchcancel', handleEnd);
     }
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseup', handleEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleEnd);
+      window.removeEventListener('touchcancel', handleEnd);
     };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, handleMouseMove, handleTouchMove, handleEnd]);
 
   // Fader Cap Position
   // Value 1 (Top) -> 0% top
@@ -98,8 +119,9 @@ export const Fader: React.FC<FaderProps> = ({
         {/* Fader Track */}
       <div 
         ref={trackRef}
-        className="relative w-8 h-full bg-gray-800 rounded-md cursor-ns-resize border border-gray-700"
+        className="relative w-8 h-full bg-gray-800 rounded-md cursor-ns-resize border border-gray-700 touch-none"
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
       >
         {/* Center Line */}
         <div className="absolute left-1/2 top-2 bottom-2 w-0.5 bg-gray-900 -translate-x-1/2"></div>
