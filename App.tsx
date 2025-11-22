@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { ChannelStrip } from './components/ChannelStrip';
 import { SubgroupStrip } from './components/SubgroupStrip';
@@ -138,15 +139,28 @@ export default function App() {
   const [master, setMaster] = useState<MasterState>({ fader: 0 });
   const [auxPrePost, setAuxPrePost] = useState<boolean[]>([true, true, true, true]);
 
-  // Panning state
+  // Panning & Zooming state
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
+
   const lastCenter = useRef({ x: 0, y: 0 });
+  const initialDist = useRef(0);
+  const initialScale = useRef(1);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 2) {
-      const cX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const cY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+
+      // 1. Calculate Center for Pan
+      const cX = (t1.clientX + t2.clientX) / 2;
+      const cY = (t1.clientY + t2.clientY) / 2;
       lastCenter.current = { x: cX, y: cY };
+
+      // 2. Calculate Distance for Zoom
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      initialDist.current = dist;
+      initialScale.current = scale;
     }
   };
 
@@ -155,14 +169,27 @@ export default function App() {
       if (e.cancelable) e.preventDefault(); // Prevent browser native pan/zoom
       e.stopPropagation();
 
-      const cX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const cY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+
+      // 1. Handle Pan
+      const cX = (t1.clientX + t2.clientX) / 2;
+      const cY = (t1.clientY + t2.clientY) / 2;
 
       const dx = cX - lastCenter.current.x;
       const dy = cY - lastCenter.current.y;
 
       setPan(p => ({ x: p.x + dx, y: p.y + dy }));
       lastCenter.current = { x: cX, y: cY };
+
+      // 2. Handle Zoom
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      if (initialDist.current > 0) {
+          const ratio = dist / initialDist.current;
+          // Clamp zoom between 0.4x and 3.0x
+          const newScale = Math.min(Math.max(initialScale.current * ratio, 0.4), 3.0);
+          setScale(newScale);
+      }
     }
   };
 
@@ -183,7 +210,7 @@ export default function App() {
                 style={{ 
                     left: '50%', 
                     top: '50%', 
-                    transform: `translate(-50%, -50%) translate(${pan.x}px, ${pan.y}px)`
+                    transform: `translate(-50%, -50%) translate(${pan.x}px, ${pan.y}px) scale(${scale})`
                 }}
             >
                 <MixerInterface 
@@ -201,7 +228,7 @@ export default function App() {
         
         {/* User Hint */}
         <div className="absolute bottom-4 right-4 text-neutral-600 text-xs pointer-events-none select-none">
-            Use 2 fingers to pan
+            Use 2 fingers to pan & zoom
         </div>
     </div>
   );
