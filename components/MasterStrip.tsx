@@ -50,8 +50,8 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
       </button>
 
       {/* Spacer to Align with Channel Gain Section - Reduced to accommodate footer alignment */}
-      <div className="h-[20px] w-full flex items-end justify-center pb-2">
-          <div className="text-[9px] text-gray-600 font-mono tracking-widest uppercase text-center">AUX CFG</div>
+      <div className="h-[10px] w-full flex items-end justify-center pb-0">
+          <div className="text-[9px] text-gray-600 font-mono tracking-widest uppercase text-center scale-75 origin-bottom">AUX CFG</div>
       </div>
 
       {/* Aux Pre/Post Toggles - Aligned with Channel Aux Knobs */}
@@ -76,8 +76,8 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
         ))}
       </div>
 
-      {/* Fader Section - Fixed height to ensure full length stability */}
-      <div className="flex justify-center w-full pb-2 mt-auto">
+      {/* Fader Section - Removed bottom padding (pb-0) to align bottom of fader track with channels */}
+      <div className="flex justify-center w-full pb-0 mt-auto">
          <Fader
             value={master.fader}
             onChange={onChange}
@@ -85,7 +85,7 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
             meterLevelR={meterLevelR}
             isStereo
             color="#ec4899" // Pink/Red for master meter
-            height={340} // Explicit height to match channel strip total layout
+            height={350} // Explicit height to match channel strip total layout
             capColor="#dc2626" // Red-600 for Master Cap
         />
       </div>
