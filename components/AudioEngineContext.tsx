@@ -58,7 +58,17 @@ class PolySynth {
   }
 }
 
-// ---
+// Constant for zeroed meters
+const ZERO_LEVELS: AudioMeterLevels = {
+  channels: {}, 
+  subgroups: {}, 
+  master: { l:0, r:0 }, 
+  auxOutputs: {}, 
+  headphones: { 
+    hp1: { l: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 }, r: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 } }, 
+    hp2: { l: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 }, r: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 } }
+  }
+};
 
 interface AudioContextType {
   meterLevels: AudioMeterLevels;
@@ -75,16 +85,7 @@ export const AudioEngineProvider: React.FC<{
   master: MasterState;
   auxPrePost: boolean[];
 }> = ({ children, channels, subgroups, master, auxPrePost }) => {
-  const [meterLevels, setMeterLevels] = useState<AudioMeterLevels>({
-    channels: {}, 
-    subgroups: {}, 
-    master: { l:0, r:0 }, 
-    auxOutputs: {}, 
-    headphones: { 
-      hp1: { l: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 }, r: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 } }, 
-      hp2: { l: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 }, r: { ch1: 0, ch2: 0, ch3: 0, ch4: 0 } }
-    }
-  });
+  const [meterLevels, setMeterLevels] = useState<AudioMeterLevels>(ZERO_LEVELS);
   const [isAudioActive, setIsAudioActive] = useState(false);
   const synthRef = useRef<PolySynth | null>(null);
   const requestRef = useRef<number | null>(null);
@@ -108,12 +109,19 @@ export const AudioEngineProvider: React.FC<{
 
   // Simulation Loop
   const animate = () => {
+    // If audio is inactive, zero out meters and stop processing logic
+    if (!isAudioActive) {
+        setMeterLevels(ZERO_LEVELS);
+        requestRef.current = requestAnimationFrame(animate);
+        return;
+    }
+
     // 1. Calculate Meter/Logic Levels
     const levels = calculateAudioLevels(channels, subgroups, master, auxPrePost);
     setMeterLevels(levels);
 
     // 2. Update Real Audio Engine (Volume mapping)
-    if (synthRef.current && isAudioActive) {
+    if (synthRef.current) {
         
         // Simplified Routing Check for Audio Engine
         const isChRoutedToMain = (ch: ChannelState) => {
