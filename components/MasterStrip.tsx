@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MasterState } from '../types';
 import { Fader } from './Fader';
@@ -50,8 +49,8 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
         RESET
       </button>
 
-      {/* Spacer to Align with Channel Gain Section */}
-      <div className="h-[40px] w-full flex items-end justify-center pb-2">
+      {/* Spacer to Align with Channel Gain Section - Reduced to accommodate footer alignment */}
+      <div className="h-[20px] w-full flex items-end justify-center pb-2">
           <div className="text-[9px] text-gray-600 font-mono tracking-widest uppercase text-center">AUX CFG</div>
       </div>
 
@@ -77,23 +76,22 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
         ))}
       </div>
 
-      {/* Fader Section - Uses absolute positioning to guarantee height filling */}
-      <div className="flex-1 w-full relative min-h-[200px] mb-6">
-        <div className="absolute inset-0 flex justify-center">
-             <Fader
-                value={master.fader}
-                onChange={onChange}
-                meterLevel={meterLevelL}
-                meterLevelR={meterLevelR}
-                isStereo
-                color="#ec4899" // Pink/Red for master meter
-                height="100%" // Fill available absolute space
-                capColor="#dc2626" // Red-600 for Master Cap
-            />
-        </div>
+      {/* Fader Section - Fixed height to ensure full length stability */}
+      <div className="flex justify-center w-full pb-2 mt-auto">
+         <Fader
+            value={master.fader}
+            onChange={onChange}
+            meterLevel={meterLevelL}
+            meterLevelR={meterLevelR}
+            isStereo
+            color="#ec4899" // Pink/Red for master meter
+            height={340} // Explicit height to match channel strip total layout
+            capColor="#dc2626" // Red-600 for Master Cap
+        />
       </div>
       
-      <div className="text-xs text-white font-bold font-mono mb-2 shrink-0">MASTER</div>
+      {/* Footer Label - Using mt-6 to match ChannelStrip footer spacing exactly */}
+      <div className="text-xs text-white font-bold font-mono mt-6 shrink-0">MASTER</div>
     </div>
   );
 };
