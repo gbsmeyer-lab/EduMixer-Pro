@@ -5,9 +5,10 @@ interface FaderProps {
   onChange: (val: number) => void;
   meterLevel: number; // 0-1
   color: string;
-  height?: number;
+  height?: number | string;
   isStereo?: boolean;
   meterLevelR?: number; // For stereo master
+  capColor?: string; // Custom color for fader cap
 }
 
 export const Fader: React.FC<FaderProps> = ({
@@ -18,6 +19,7 @@ export const Fader: React.FC<FaderProps> = ({
   height = 200,
   isStereo = false,
   meterLevelR = 0,
+  capColor,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -62,9 +64,22 @@ export const Fader: React.FC<FaderProps> = ({
 
   // Fader Cap Position
   const capPosition = (1 - value) * 100; 
+  
+  // Determine Cap Styling
+  const capBaseClasses = "absolute left-0 right-0 h-8 rounded shadow-lg border-t flex items-center justify-center z-10";
+  const capDefaultClasses = "bg-gradient-to-b from-gray-500 to-gray-700 border-gray-400";
+  
+  // If capColor is present, we use inline styles to override background. 
+  const capStyle: React.CSSProperties = {
+    top: `calc(${capPosition}% - 16px)`,
+    ...(capColor ? {
+        background: `linear-gradient(to bottom, ${capColor}, #450a0a)`, // Gradient to very dark version of color
+        borderColor: '#fca5a5' // lighter top border for highlight
+    } : {})
+  };
 
   return (
-    <div className="flex gap-2 h-full items-end" style={{ height: `${height}px` }}>
+    <div className="flex gap-2 h-full items-end" style={{ height: typeof height === 'number' ? `${height}px` : height }}>
         {/* Fader Track */}
       <div 
         ref={trackRef}
@@ -79,8 +94,8 @@ export const Fader: React.FC<FaderProps> = ({
 
         {/* Fader Cap */}
         <div 
-            className="absolute left-0 right-0 h-8 bg-gradient-to-b from-gray-500 to-gray-700 rounded shadow-lg border-t border-gray-400 flex items-center justify-center z-10"
-            style={{ top: `calc(${capPosition}% - 16px)` }} // -16px is half cap height
+            className={`${capBaseClasses} ${!capColor ? capDefaultClasses : ''}`}
+            style={capStyle}
         >
             <div className="w-full h-0.5 bg-black/50"></div>
         </div>
@@ -111,7 +126,7 @@ const MeterBar: React.FC<{ level: number; color: string }> = ({ level, color }) 
             
             {/* Active Signal */}
             <div 
-                className="absolute bottom-0 left-0 right-0 transition-all duration-75 ease-out"
+                className="absolute bottom-0 left-0 right-0 transition-all duration-75 ease-linear"
                 style={{ 
                     height: `${percentage}%`, 
                     backgroundColor: color,

@@ -66,16 +66,17 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
         ))}
       </div>
 
-      {/* Push Fader to bottom using mt-auto to ensure alignment with Channel Strips */}
-      <div className="mt-auto flex justify-center w-full pb-2">
+      {/* Fader Section - Flex-1 to fill remaining vertical space */}
+      <div className="flex-1 w-full flex justify-center pb-2 min-h-0 mt-2">
         <Fader
           value={master.fader}
           onChange={onChange}
           meterLevel={meterLevelL}
           meterLevelR={meterLevelR}
           isStereo
-          color="#ec4899" // Pink/Red for master
-          height={220}
+          color="#ec4899" // Pink/Red for master meter
+          height="100%" // Fill available space
+          capColor="#dc2626" // Red-600 for Master Cap
         />
       </div>
       
