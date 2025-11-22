@@ -12,6 +12,7 @@ interface MasterStripProps {
   toggleAudio: () => void;
   auxPrePost: boolean[];
   toggleAuxPrePost: (index: number) => void;
+  onReset: () => void;
 }
 
 export const MasterStrip: React.FC<MasterStripProps> = ({ 
@@ -22,7 +23,8 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
   isAudioActive,
   toggleAudio,
   auxPrePost,
-  toggleAuxPrePost
+  toggleAuxPrePost,
+  onReset
 }) => {
   return (
     <div className="flex flex-col items-center bg-gray-950 border-l-2 border-gray-700 p-2 w-24 shrink-0 h-full relative">
@@ -39,8 +41,17 @@ export const MasterStrip: React.FC<MasterStripProps> = ({
         POWER
       </button>
 
+      {/* Reset Button */}
+      <button
+        onClick={onReset}
+        className="text-[10px] font-bold px-2 py-1 rounded w-full text-center mt-2 border border-yellow-800/50 text-yellow-600 hover:bg-yellow-900/20 hover:text-yellow-500 hover:border-yellow-600 transition-colors"
+        title="Reset all faders, knobs, and routing to default"
+      >
+        RESET
+      </button>
+
       {/* Spacer to Align with Channel Gain Section */}
-      <div className="h-[70px] w-full flex items-end justify-center pb-2">
+      <div className="h-[40px] w-full flex items-end justify-center pb-2">
           <div className="text-[9px] text-gray-600 font-mono tracking-widest uppercase text-center">AUX CFG</div>
       </div>
 

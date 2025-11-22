@@ -37,6 +37,23 @@ const MixerInterface: React.FC<{
       });
   };
 
+  const handleReset = () => {
+    // Deep copy initial states to avoid reference issues
+    setChannels(INITIAL_CHANNELS.map(ch => ({
+        ...ch,
+        aux: [...ch.aux],
+        routing: { ...ch.routing }
+    })));
+    
+    setSubgroups(INITIAL_SUBGROUPS.map(sg => ({
+        ...sg,
+        routing: { ...sg.routing }
+    })));
+
+    setMaster({ fader: 0 });
+    setAuxPrePost([true, true, true, true]);
+  };
+
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center bg-neutral-900 p-4 overflow-hidden">
       
@@ -114,6 +131,7 @@ const MixerInterface: React.FC<{
                     isAudioActive={isAudioActive}
                     auxPrePost={auxPrePost}
                     toggleAuxPrePost={toggleAuxPrePost}
+                    onReset={handleReset}
                 />
              </div>
         </div>
