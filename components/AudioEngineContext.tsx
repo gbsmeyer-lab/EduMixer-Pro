@@ -62,7 +62,7 @@ class PolySynth {
 
 interface AudioContextType {
   meterLevels: AudioMeterLevels;
-  startAudio: () => void;
+  toggleAudio: () => void;
   isAudioActive: boolean;
 }
 
@@ -89,12 +89,21 @@ export const AudioEngineProvider: React.FC<{
   const synthRef = useRef<PolySynth | null>(null);
   const requestRef = useRef<number | null>(null);
 
-  const startAudio = () => {
-    if (!synthRef.current) {
-        synthRef.current = new PolySynth();
+  const toggleAudio = () => {
+    if (isAudioActive) {
+        // Suspend (Pause)
+        if (synthRef.current) {
+            synthRef.current.ctx.suspend();
+        }
+        setIsAudioActive(false);
+    } else {
+        // Start or Resume
+        if (!synthRef.current) {
+            synthRef.current = new PolySynth();
+        }
+        synthRef.current.start();
+        setIsAudioActive(true);
     }
-    synthRef.current.start();
-    setIsAudioActive(true);
   };
 
   // Simulation Loop
@@ -104,7 +113,7 @@ export const AudioEngineProvider: React.FC<{
     setMeterLevels(levels);
 
     // 2. Update Real Audio Engine (Volume mapping)
-    if (synthRef.current) {
+    if (synthRef.current && isAudioActive) {
         
         // Simplified Routing Check for Audio Engine
         const isChRoutedToMain = (ch: ChannelState) => {
@@ -143,10 +152,10 @@ export const AudioEngineProvider: React.FC<{
     return () => {
         if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [channels, subgroups, master, auxPrePost]);
+  }, [channels, subgroups, master, auxPrePost, isAudioActive]);
 
   return (
-    <AudioEngineContext.Provider value={{ meterLevels, startAudio, isAudioActive }}>
+    <AudioEngineContext.Provider value={{ meterLevels, toggleAudio, isAudioActive }}>
       {children}
     </AudioEngineContext.Provider>
   );

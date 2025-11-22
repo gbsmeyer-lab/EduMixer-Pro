@@ -19,7 +19,7 @@ const MixerInterface: React.FC<{
   auxPrePost: boolean[];
   setAuxPrePost: React.Dispatch<React.SetStateAction<boolean[]>>;
 }> = ({ channels, setChannels, subgroups, setSubgroups, master, setMaster, auxPrePost, setAuxPrePost }) => {
-  const { meterLevels, startAudio, isAudioActive } = useAudioEngine();
+  const { meterLevels, toggleAudio, isAudioActive } = useAudioEngine();
 
   const updateChannel = (id: number, updates: Partial<ChannelState>) => {
     setChannels(prev => prev.map(ch => ch.id === id ? { ...ch, ...updates } : ch));
@@ -110,7 +110,7 @@ const MixerInterface: React.FC<{
                     onChange={(val) => setMaster({ ...master, fader: val })}
                     meterLevelL={meterLevels.master.l}
                     meterLevelR={meterLevels.master.r}
-                    startAudio={startAudio}
+                    toggleAudio={toggleAudio}
                     isAudioActive={isAudioActive}
                     auxPrePost={auxPrePost}
                     toggleAuxPrePost={toggleAuxPrePost}
