@@ -1,0 +1,5 @@
+{
+  "name": "EduMixer Pro",
+  "description": "An interactive educational audio mixer with signal routing, subgrouping, and headphone monitoring simulation.",
+  "requestFramePermissions": []
+}
